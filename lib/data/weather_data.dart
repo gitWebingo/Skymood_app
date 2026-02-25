@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:skymood/models/weather_model.dart';
 import 'dart:math';
 import 'package:geocoding/geocoding.dart';
+import 'package:intl/intl.dart';
 
 class WeatherRepository {
   // URLs for Open-Meteo Geocoding and Forecast APIs
@@ -77,19 +78,41 @@ class WeatherRepository {
 
       final String currentCondition = _mapWeatherCode(current['weather_code']);
 
-      // Map Hourly Forecast (next 24 hours)
+      // Map Hourly Forecast (next 24 hours starting from current hour)
       List<HourlyForecast> hourlyList = [];
-      for (int i = 0; i < 24; i++) {
-        final timeStr = hourly['time'][i];
+      final now = DateTime.now();
+      final currentHour = DateTime(now.year, now.month, now.day, now.hour);
+
+      // Find the index that matches the current hour or is the next available
+      int startIndex = 0;
+      final hourlyTimes = hourly['time'] as List;
+      for (int i = 0; i < hourlyTimes.length; i++) {
+        final time = DateTime.parse(hourlyTimes[i]);
+        if (time.isAtSameMomentAs(currentHour) || time.isAfter(currentHour)) {
+          startIndex = i;
+          break;
+        }
+      }
+
+      for (int i = startIndex;
+          i < startIndex + 24 && i < hourlyTimes.length;
+          i++) {
+        final timeStr = hourlyTimes[i];
         final dateTime = DateTime.parse(timeStr);
-        final hour = dateTime.hour;
-        final period = hour >= 12 ? 'PM' : 'AM';
-        final displayHour = hour == 0 ? 12 : (hour > 12 ? hour - 12 : hour);
+        final timeLabel = DateFormat('h a').format(dateTime).toLowerCase();
+
+        // For the very first item (current hour), use the live "current" data
+        // if it matches the current hour for better accuracy
+        final isCurrentHour = i == startIndex;
 
         hourlyList.add(HourlyForecast(
-          time: '$displayHour $period',
-          temp: hourly['temperature_2m'][i].round(),
-          condition: _mapWeatherCode(hourly['weather_code'][i]),
+          time: timeLabel,
+          temp: isCurrentHour
+              ? current['temperature_2m'].round()
+              : hourly['temperature_2m'][i].round(),
+          condition: isCurrentHour
+              ? currentCondition
+              : _mapWeatherCode(hourly['weather_code'][i]),
         ));
       }
 
@@ -205,13 +228,15 @@ class WeatherRepository {
                 low: baseTemp - 5,
                 condition: 'Sunny',
               )),
-      hourlyForecast: List.generate(
-          24,
-          (i) => HourlyForecast(
-                time: '${(i % 12 == 0 ? 12 : i % 12)} ${i < 12 ? 'AM' : 'PM'}',
-                temp: baseTemp,
-                condition: 'Sunny',
-              )),
+      hourlyForecast: List.generate(24, (i) {
+        final forecastTime = DateTime.now().add(Duration(hours: i));
+        final timeLabel = DateFormat('h a').format(forecastTime).toLowerCase();
+        return HourlyForecast(
+          time: timeLabel,
+          temp: baseTemp + random.nextInt(4) - 2,
+          condition: 'Sunny',
+        );
+      }),
     );
   }
 

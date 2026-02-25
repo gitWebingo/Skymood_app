@@ -1,4 +1,4 @@
-package com.example.skymood
+package com.weather.skymood
 
 import io.flutter.embedding.android.FlutterActivity
 

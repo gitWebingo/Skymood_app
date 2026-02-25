@@ -58,8 +58,9 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
             child: Container(
-              color:  Color(0xFF2E335A).withOpacity(0.8)// Dark overlay for better contrast
-            ),
+                color: Color(0xFF2E335A)
+                    .withOpacity(0.8) // Dark overlay for better contrast
+                ),
           ),
 
           // Decorative Glow Orbs
@@ -73,8 +74,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     // Premium Logo/Header Section
-                    const Icon(Icons.cloud_queue_rounded,
-                        size: 80, color: Colors.white),
+                    Image.asset(
+                      'assets/logo.png',
+                      height: 100,
+                      fit: BoxFit.contain,
+                    ),
                     const SizedBox(height: 16),
                     Text(
                       'SkyMood',
@@ -152,12 +156,13 @@ class _LoginScreenState extends State<LoginScreen> {
                                       begin: Alignment.topCenter,
                                       end: Alignment.bottomCenter,
                                       colors: [
-                                        const Color(0xFF2E335A).withOpacity(0.95),
-                                        const Color(0xFF1C1B33).withOpacity(0.98),
+                                        const Color(0xFF2E335A)
+                                            .withOpacity(0.95),
+                                        const Color(0xFF1C1B33)
+                                            .withOpacity(0.98),
                                       ],
                                     ),
                                     borderRadius: BorderRadius.circular(20),
-
                                   ),
                                   child: Center(
                                     child: _isLoading
@@ -206,7 +211,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             TextSpan(
                               text: 'Continue as Guest',
                               style: TextStyle(
-                                color:   Colors.white.withOpacity(0.8),
+                                color: Colors.white.withOpacity(0.8),
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
