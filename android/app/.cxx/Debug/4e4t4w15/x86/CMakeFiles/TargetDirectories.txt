@@ -1,0 +1,2 @@
+C:/Users/PC/Desktop/Nipa/Skymood_app/android/app/.cxx/Debug/4e4t4w15/x86/CMakeFiles/edit_cache.dir
+C:/Users/PC/Desktop/Nipa/Skymood_app/android/app/.cxx/Debug/4e4t4w15/x86/CMakeFiles/rebuild_cache.dir
